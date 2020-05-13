@@ -52,11 +52,11 @@ public class LogDao {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             while (resultSet.next()) {
-                retValue.add(new Log(Integer.parseInt(resultSet.getString(1)), resultSet.getString(2),
-                        resultSet.getString(3), simpleDateFormat.parse(resultSet.getString(4)),
-                        resultSet.getString(5)));
+                retValue.add(new Log(resultSet.getInt("logID"),resultSet.getString("context"),
+                        resultSet.getString("operator"),resultSet.getDate("time"),
+                        resultSet.getString("type")));
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return retValue;
@@ -82,7 +82,7 @@ public class LogDao {
 
 
     public static void insert(String operator,String context,String type) {
-        final String sql = " INSERT INTO Log(operator,context,type)VALUES(?,?,?)";
+        final String sql = " INSERT INTO Log(operator,context,type,time)VALUES(?,?,?,now())";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, operator, context, type);
     }

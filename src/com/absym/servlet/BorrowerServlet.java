@@ -1,9 +1,6 @@
 package com.absym.servlet;
 
-import com.absym.dao.BookDao;
-import com.absym.dao.BorrowDao;
-import com.absym.dao.BorrowerDao;
-import com.absym.dao.UserDao;
+import com.absym.dao.*;
 import com.absym.entity.BorrowInf;
 import com.absym.entity.Borrower;
 import com.absym.entity.User;
@@ -39,11 +36,13 @@ public class BorrowerServlet extends HttpServlet {
         mapDat.put("code", "0");
         mapDat.put("msg", "query ok");
          if ("/getListDatBorrow".equals(requestURI)) {
+             this.logRecord(request,"View List Of Borrow","View");
             User user = (User) request.getSession().getAttribute("user");
             List<BorrowInf> dat = BorrowDao.queryList(user.getAccount(), page.getOffset(), page.getLimit());
             mapDat.put("data", dat);
             mapDat.put("count", dat.size());
         } else if ("/getListDatBook".equals(requestURI)) {
+             this.logRecord(request,"View List Of Book","View");
             mapDat.put("data", BookDao.queryList(page.getOffset(), page.getLimit()));
             mapDat.put("count", BookDao.queryNumAll());
         }
@@ -58,6 +57,7 @@ public class BorrowerServlet extends HttpServlet {
 
         if ("/addBorrows".equals(requestURI)) {
             String[] books = request.getParameterValues("books[]");
+            this.logRecord(request,"Try To Borrow Some Book" + books.toString(),"Borrow");
             Borrower borrower = (Borrower) request.getSession().getAttribute("borrower");
             if (borrower.getMaxBook() - borrower.getBorrowBook() - books.length < 0) {
                 mapDat.put("msg", "您已经达最大借阅量，这个问题交钱可以解决");
@@ -87,6 +87,7 @@ public class BorrowerServlet extends HttpServlet {
         Map<String, Object> mapDat = new HashMap<>();
         if ("/deleteBorrow".equals(requestURI)) {
             String[] borrows = request.getParameterValues("borrows[]");
+            this.logRecord(request,"Try To Delete Some Borrows" +borrows.toString() ,"Delete");
             for (String delete_id : borrows) {
                 BorrowDao.delete(delete_id);
             }
@@ -108,6 +109,7 @@ public class BorrowerServlet extends HttpServlet {
             User user = UserDao.excuteQuery(new User(borrowerAccount, oldpassword));
             mapDat.put("msg", "密码错误，请重试");
             if (user != null) {
+                this.logRecord(request,"Try To Modify Self Information","Modify");
                 Borrower borrower = BorrowerDao.excuteQuery(new Borrower(borrowerAccount));
                 borrower.setBorrowerID(request.getParameter("borrowerID"));
                 borrower.setPhone(request.getParameter("phone"));
@@ -151,6 +153,11 @@ public class BorrowerServlet extends HttpServlet {
         } else {
             request.getRequestDispatcher(request.getContextPath() + "/index.jsp").forward(request, response);
         }
+    }
+
+    private void logRecord(HttpServletRequest request, String context, String type){
+        User userInf =  (User)request.getSession().getAttribute("user");
+        LogDao.insert(userInf.getAccount(),context,type);
     }
 
     @Override

@@ -47,18 +47,23 @@ public class AdminServlet extends HttpServlet {
         mapDat.put("msg", "query ok");
         Map<String, Object> map = new ReadPost().getPostContext(request);
         if ("/getListDatBorrower".equals(requestURI)) {
+            this.logRecord(request,"View List of Borrower","View");
             mapDat.put("data", BorrowerDao.queryList(page.getOffset(), page.getLimit()));
             mapDat.put("count", BorrowerDao.queryNumAll());
         } else if ("/getListDatBook".equals(requestURI)) {
+            this.logRecord(request,"View List of Book","View");
             mapDat.put("data", BookDao.queryList(page.getOffset(), page.getLimit()));
             mapDat.put("count", BookDao.queryNumAll());
         } else if ("/getListDatAdmin".equals(requestURI)) {
+            this.logRecord(request,"View List of Admin","View");
             mapDat.put("data", AdminDao.queryList(page.getOffset(), page.getLimit()));
             mapDat.put("count", AdminDao.queryNumAll());
         } else if ("/getListDatBorrow".equals(requestURI)) {
+            this.logRecord(request,"View List of Borrow Information","View");
             mapDat.put("data", BorrowDao.queryList(page.getOffset(), page.getLimit()));
             mapDat.put("count", BorrowDao.queryNumAll());
         } else if ("/getListDatLog".equals(requestURI)) {
+            this.logRecord(request,"View List of Log","View");
             mapDat.put("data", LogDao.queryList(page.getOffset(), page.getLimit()));
             mapDat.put("count", LogDao.queryNumAll());
 
@@ -75,13 +80,14 @@ public class AdminServlet extends HttpServlet {
         Map<String, Object> map = readPost.getPostContext(request);
         if ("/modifyBookInf".equals(requestURI)) {
             Book book = new Book((String) map.get("bookISBN"));
-            book = BookDao.excuteQuery(book);
             request.getSession().setAttribute("bookType", "modifyBookInf");
-            request.getSession().setAttribute("modifyBookInf", book);
+            request.getSession().setAttribute("modifyBookInf", BookDao.excuteQuery(book));
+            this.logRecord(request,"Try to modify a Book Information which is "+book.getBookISBN(),"Modify");
         } else if ("/modifyBorrowerInf".equals(requestURI)) {
             Borrower borrower = new Borrower((String) map.get("borrowerAccount"));
             request.getSession().setAttribute("borrowerType", "modifyBorrowerInf");
             request.getSession().setAttribute("modifyBorrowerInf", BorrowerDao.excuteQuery(borrower));
+            this.logRecord(request,"Try to modify a Borrower Information which is "+borrower.getBorrowerAccount(),"Modify");
         }
         dat.put("state", "success");
         JSONObject json = new JSONObject(dat);
@@ -98,6 +104,7 @@ public class AdminServlet extends HttpServlet {
             mapDat.put("msg", "密码错误，请重试");
             User user = UserDao.excuteQuery(new User(adminAccount, oldpassword));
             if (user != null) {
+                this.logRecord(request,"Try To Modify Self Information","Modify");
                 Admin admin = AdminDao.excuteQuery(new Admin(adminAccount));
                 admin.setAdminName(request.getParameter("adminName"));
                 admin.setEmail(request.getParameter("email"));
@@ -116,8 +123,10 @@ public class AdminServlet extends HttpServlet {
                     request.getParameter("publicer"), request.getParameter("publicTime"), request.getParameter("type"),
                     Integer.parseInt(request.getParameter("allNum")), Integer.parseInt(request.getParameter("inventoryNum")));
             if (BookDao.excuteQuery(book) == null) {
+                this.logRecord(request,"Try To Add A New Book Information ISBN is "+book.getBookISBN(),"Add");
                 BookDao.insert(book);
             } else {
+                this.logRecord(request,"Try To Modify A New Book Information ISBN is "+book.getBookISBN(),"Modify");
                 BookDao.update(book);
             }
             mapDat.put("msg", "提交成功");
@@ -127,14 +136,17 @@ public class AdminServlet extends HttpServlet {
                     request.getParameter("phone"), request.getParameter("borrowerID"), request.getParameter("sex"),
                     Integer.parseInt(request.getParameter("maxBook")), Integer.parseInt(request.getParameter("borrowBook")));
             if (BorrowerDao.excuteQuery(borrower) == null) {
+                this.logRecord(request,"Try To Add A New Book Information Account is "+borrower.getBorrowerAccount(),"Modify");
                 BorrowerDao.insert(borrower);
             } else {
                 BorrowerDao.update(borrower);
+                this.logRecord(request,"Try To Add A New Book Information Account is "+borrower.getBorrowerAccount(),"Add");
             }
             mapDat.put("msg", "提交成功");
         } else if ("/addBorrowInf".equals(requestURI)) {
-            BorrowInf borrow = new BorrowInf(request.getParameter("borrower"), request.getParameter("bookISBN"));
 
+            BorrowInf borrow = new BorrowInf(request.getParameter("borrower"), request.getParameter("bookISBN"));
+            this.logRecord(request,"Try To Add A Recording Information","Add");
             Book book = BookDao.excuteQuery(new Book(borrow.getBookISBN()));
             Borrower borrower =  BorrowerDao.excuteQuery(new Borrower(borrow.getBorrower()));
             if (book == null) {
@@ -159,13 +171,16 @@ public class AdminServlet extends HttpServlet {
     private void deleteInf(HttpServletRequest request, HttpServletResponse response, String requestURI) throws IOException {
         Map<String, Object> dat = new HashMap<>();
         if ("/deleteBorrows".equals(requestURI)) {
+
             String[] borrows = request.getParameterValues("borrows[]");
+            this.logRecord(request,"Try To Delete Some Borrows" +borrows.toString() ,"Delete");
             for (String delete_id : borrows) {
                 BorrowDao.delete(delete_id);
             }
             dat.put("msg", "删除" + borrows.length + "条数据成功");
         } else if ("/deleteBooks".equals(requestURI)) {
             String[] books = request.getParameterValues("books[]");
+            this.logRecord(request,"Try To Delete Some Book" +books.toString() ,"Delete");
             StringBuffer buf = new StringBuffer();
             for (String ISBN : books) {
                 if (BorrowDao.queryBookNum(ISBN) == 0) {
@@ -182,6 +197,7 @@ public class AdminServlet extends HttpServlet {
         } else if ("/deleteBorrowers".equals(requestURI)) {
             String[] borrowers = request.getParameterValues("borrower[]");
             StringBuffer buf = new StringBuffer();
+            this.logRecord(request,"Try To Delete Some Borrower" +borrowers.toString() ,"Delete");
             for (String account : borrowers) {
                 if (BorrowDao.queryBorrowerNum(account) == 0) {
                     BorrowerDao.delete(account);
@@ -230,5 +246,11 @@ public class AdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.doPost(request, response);
 
+    }
+
+
+    private void logRecord(HttpServletRequest request, String context, String type){
+        User userInf =  (User)request.getSession().getAttribute("user");
+        LogDao.insert(userInf.getAccount(),context,type);
     }
 }

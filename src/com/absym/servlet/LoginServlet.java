@@ -38,6 +38,7 @@ public class LoginServlet extends HttpServlet {
         } else {
             userInf = UserDao.excuteQuery(userInf);
             if (userInf == null) {
+                LogDao.insert(userInf.getAccount(),"error user information","login");
                 retValue.put("msg", "用户不存在");
                 retValue.put("state", "error");
             } else {
@@ -86,6 +87,7 @@ public class LoginServlet extends HttpServlet {
                 LogDao.insert(request.getRemoteAddr(),"verify account state", "verify");
                 dat = this.loginVerity(request);
             } else {
+                LogDao.insert(request.getRemoteAddr(),"catpche code is error", "verify");
                 dat.put("msg", "验证码不正确，请重新输入");
                 dat.put("state", "error");
             }
