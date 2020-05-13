@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BookDao {
 
-    public List<Book> search(Object key, Object offset, Object limit) {
+    public static List<Book> search(Object key, Object offset, Object limit) {
         List<Book> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM book WHERE bookISBN LIKE '%?%' OR bookName LIKE '%?%' LIMIT ? , ?";
         DBConnector connector = new DBConnector();
@@ -29,7 +29,7 @@ public class BookDao {
         return retValue;
     }
 
-    public int searchNum(Object key) {
+    public static int searchNum(Object key) {
         final String sql = "SELECT * FROM book WHERE bookISBN LIKE '%?%' OR bookName LIKE '%?%'";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, key, key);
@@ -42,31 +42,31 @@ public class BookDao {
         return -1;
     }
 
-    public void insert(Book book) {
+    public static void insert(Book book) {
         final String sql = "INSERT INTO book(bookName,type,publicer,publicTime,per,price,inventoryNum,allNum,bookISBN)VALUES(?,?,?,?,?,?,?,?,?)";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, book.getBookName(), book.getType(), book.getPublicer(), book.getPublicTime(),
                 book.getPer(), book.getPrice(), book.getInventoryNum(), book.getAllNum(), book.getBookISBN());
     }
 
-    public void update(Book book) {
+    public static void update(Book book) {
         final String sql = "UPDATE book SET bookName=?,publicer=?,publicTime=?,type=?,per=?,price =?,inventoryNum=?,allNum=? WHERE bookISBN=?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, book.getBookName(), book.getPublicer(), book.getPublicTime(), book.getType(),
                 book.getPer(), book.getPrice(), book.getInventoryNum(), book.getAllNum(), book.getBookISBN());
     }
 
-    public void delete(String isbn) {
+    public static void delete(String isbn) {
         final String sql = "DELETE FROM book WHERE bookISBN = ?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, isbn);
     }
 
-    public Book excuteQuery(Book book) {
-        return this.excuteQuery(book.getBookISBN());
+    public static Book excuteQuery(Book book) {
+        return BookDao.excuteQuery(book.getBookISBN());
     }
 
-    public Book excuteQuery(String ISBN) {
+    public static Book excuteQuery(String ISBN) {
         final String sql = "SELECT * FROM book t WHERE t.bookISBN = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, ISBN);
@@ -84,7 +84,7 @@ public class BookDao {
         return null;
     }
 
-    public List<Book> queryList(Object offset, Object limit) {
+    public static List<Book> queryList(Object offset, Object limit) {
         List<Book> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM book WHERE bookISBN LIMIT ? , ?";
         DBConnector connector = new DBConnector();
@@ -102,7 +102,7 @@ public class BookDao {
         return retValue;
     }
 
-    public int queryNumAll() {
+    public static int queryNumAll() {
 
         final String sql = "SELECT * FROM book";
         DBConnector connector = new DBConnector();

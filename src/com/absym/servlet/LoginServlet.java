@@ -2,6 +2,7 @@ package com.absym.servlet;
 
 import com.absym.dao.AdminDao;
 import com.absym.dao.BorrowerDao;
+import com.absym.dao.LogDao;
 import com.absym.dao.UserDao;
 import com.absym.entity.Admin;
 import com.absym.entity.Borrower;
@@ -35,12 +36,12 @@ public class LoginServlet extends HttpServlet {
             retValue.put("msg", "请输入密码");
             retValue.put("state", "warning");
         } else {
-            UserDao userOperator = new UserDao();
-            userInf = userOperator.excuteQuery(userInf);
+            userInf = UserDao.excuteQuery(userInf);
             if (userInf == null) {
                 retValue.put("msg", "用户不存在");
                 retValue.put("state", "error");
             } else {
+                LogDao.insert(userInf.getAccount(),"Login System","login");
                 request.getSession().setAttribute("user", userInf);
                 request.getSession().setAttribute("loginState", "ENABLE");
                 retValue.put("state", "success");
@@ -72,6 +73,7 @@ public class LoginServlet extends HttpServlet {
         if (requestURI.isEmpty() || "/".equals(requestURI)) {
             request.getRequestDispatcher(request.getContextPath() + "/index.jsp").forward(request, response);
         } else if ("/getCaptcheCodeImg".equals(requestURI)) {
+            LogDao.insert(request.getRemoteAddr(),"get captche image", "verify");
             CaptchaUtil cap = new CaptchaUtil(5, 120, 30);
             request.getSession().setAttribute("catpcheCode", cap.generatorStrCaptch());
             BufferedImage image = cap.generatorRotateVCaptchaImage(true);
@@ -81,6 +83,7 @@ public class LoginServlet extends HttpServlet {
             String srcCap = ((String) request.getSession().getAttribute("catpcheCode")).toUpperCase();
             String inputCap = ((String) request.getParameter("captche")).toUpperCase();
             if (srcCap.equals(inputCap)) {
+                LogDao.insert(request.getRemoteAddr(),"verify account state", "verify");
                 dat = this.loginVerity(request);
             } else {
                 dat.put("msg", "验证码不正确，请重新输入");

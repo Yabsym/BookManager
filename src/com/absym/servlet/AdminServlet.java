@@ -47,25 +47,20 @@ public class AdminServlet extends HttpServlet {
         mapDat.put("msg", "query ok");
         Map<String, Object> map = new ReadPost().getPostContext(request);
         if ("/getListDatBorrower".equals(requestURI)) {
-            BorrowerDao borrowerkDao = new BorrowerDao();
-            mapDat.put("data", borrowerkDao.queryList(page.getOffset(), page.getLimit()));
-            mapDat.put("count", borrowerkDao.queryNumAll());
+            mapDat.put("data", BorrowerDao.queryList(page.getOffset(), page.getLimit()));
+            mapDat.put("count", BorrowerDao.queryNumAll());
         } else if ("/getListDatBook".equals(requestURI)) {
-            BookDao bookDao = new BookDao();
-            mapDat.put("data", bookDao.queryList(page.getOffset(), page.getLimit()));
-            mapDat.put("count", bookDao.queryNumAll());
+            mapDat.put("data", BookDao.queryList(page.getOffset(), page.getLimit()));
+            mapDat.put("count", BookDao.queryNumAll());
         } else if ("/getListDatAdmin".equals(requestURI)) {
-            AdminDao adminkDao = new AdminDao();
-            mapDat.put("data", adminkDao.queryList(page.getOffset(), page.getLimit()));
-            mapDat.put("count", adminkDao.queryNumAll());
+            mapDat.put("data", AdminDao.queryList(page.getOffset(), page.getLimit()));
+            mapDat.put("count", AdminDao.queryNumAll());
         } else if ("/getListDatBorrow".equals(requestURI)) {
-            BorrowDao borrowDao = new BorrowDao();
-            mapDat.put("data", borrowDao.queryList(page.getOffset(), page.getLimit()));
-            mapDat.put("count", borrowDao.queryNumAll());
+            mapDat.put("data", BorrowDao.queryList(page.getOffset(), page.getLimit()));
+            mapDat.put("count", BorrowDao.queryNumAll());
         } else if ("/getListDatLog".equals(requestURI)) {
-            LogDao logDao = new LogDao();
-            mapDat.put("data", logDao.queryList(page.getOffset(), page.getLimit()));
-            mapDat.put("count", logDao.queryNumAll());
+            mapDat.put("data", LogDao.queryList(page.getOffset(), page.getLimit()));
+            mapDat.put("count", LogDao.queryNumAll());
 
         }
         JSONObject json = new JSONObject(mapDat);
@@ -79,16 +74,14 @@ public class AdminServlet extends HttpServlet {
         ReadPost readPost = new ReadPost();
         Map<String, Object> map = readPost.getPostContext(request);
         if ("/modifyBookInf".equals(requestURI)) {
-            BookDao bookDao = new BookDao();
             Book book = new Book((String) map.get("bookISBN"));
-            book = bookDao.excuteQuery(book);
+            book = BookDao.excuteQuery(book);
             request.getSession().setAttribute("bookType", "modifyBookInf");
             request.getSession().setAttribute("modifyBookInf", book);
         } else if ("/modifyBorrowerInf".equals(requestURI)) {
-            BorrowerDao borrowerDao = new BorrowerDao();
             Borrower borrower = new Borrower((String) map.get("borrowerAccount"));
             request.getSession().setAttribute("borrowerType", "modifyBorrowerInf");
-            request.getSession().setAttribute("modifyBorrowerInf", borrowerDao.excuteQuery(borrower));
+            request.getSession().setAttribute("modifyBorrowerInf", BorrowerDao.excuteQuery(borrower));
         }
         dat.put("state", "success");
         JSONObject json = new JSONObject(dat);
@@ -103,52 +96,47 @@ public class AdminServlet extends HttpServlet {
             String adminAccount = request.getParameter("adminAccount");
             String oldpassword = request.getParameter("oldpassword");
             mapDat.put("msg", "密码错误，请重试");
-
-            UserDao userDao = new UserDao();
-            User user = userDao.excuteQuery(new User(adminAccount, oldpassword));
+            User user = UserDao.excuteQuery(new User(adminAccount, oldpassword));
             if (user != null) {
-                AdminDao adminkDao = new AdminDao();
-                Admin admin = adminkDao.excuteQuery(new Admin(adminAccount));
+                Admin admin = AdminDao.excuteQuery(new Admin(adminAccount));
                 admin.setAdminName(request.getParameter("adminName"));
                 admin.setEmail(request.getParameter("email"));
                 admin.setAdminId(request.getParameter("adminId"));
                 admin.setPhone(request.getParameter("phone"));
                 user.setPassword(request.getParameter("newpassword"));
                 user.setUsername(request.getParameter("adminName"));
-                adminkDao.excuteUpdate(admin);
-                userDao.excuteUpdate(user);
+                AdminDao.excuteUpdate(admin);
+                UserDao.excuteUpdate(user);
                 request.getSession().setAttribute("admin", admin);
                 mapDat.put("msg", "信息更新成功");
             }
         } else if ("/addBookInf".equals(requestURI)) {
-            BookDao bookDao = new BookDao();
             Book book = new Book(request.getParameter("bookISBN"), request.getParameter("bookName"),
                     request.getParameter("per"), Double.parseDouble(request.getParameter("price")),
                     request.getParameter("publicer"), request.getParameter("publicTime"), request.getParameter("type"),
                     Integer.parseInt(request.getParameter("allNum")), Integer.parseInt(request.getParameter("inventoryNum")));
-            if (bookDao.excuteQuery(book) == null) {
-                bookDao.insert(book);
+            if (BookDao.excuteQuery(book) == null) {
+                BookDao.insert(book);
             } else {
-                bookDao.update(book);
+                BookDao.update(book);
             }
             mapDat.put("msg", "提交成功");
         } else if ("/addBorrowerInf".equals(requestURI)) {
-            BorrowerDao borrowerDao = new BorrowerDao();
             Borrower borrower = new Borrower(request.getParameter("borrowerName"), request.
                     getParameter("borrowerAccount"), request.getParameter("borrowerAddress"),
                     request.getParameter("phone"), request.getParameter("borrowerID"), request.getParameter("sex"),
                     Integer.parseInt(request.getParameter("maxBook")), Integer.parseInt(request.getParameter("borrowBook")));
-            if (borrowerDao.excuteQuery(borrower) == null) {
-                borrowerDao.insert(borrower);
+            if (BorrowerDao.excuteQuery(borrower) == null) {
+                BorrowerDao.insert(borrower);
             } else {
-                borrowerDao.update(borrower);
+                BorrowerDao.update(borrower);
             }
             mapDat.put("msg", "提交成功");
         } else if ("/addBorrowInf".equals(requestURI)) {
             BorrowInf borrow = new BorrowInf(request.getParameter("borrower"), request.getParameter("bookISBN"));
-            BorrowDao borrowDao = new BorrowDao();
-            Book book = new BookDao().excuteQuery(new Book(borrow.getBookISBN()));
-            Borrower borrower = new BorrowerDao().excuteQuery(new Borrower(borrow.getBorrower()));
+
+            Book book = BookDao.excuteQuery(new Book(borrow.getBookISBN()));
+            Borrower borrower =  BorrowerDao.excuteQuery(new Borrower(borrow.getBorrower()));
             if (book == null) {
                 mapDat.put("msg", "不存在该书");
             } else if (borrower == null) {
@@ -158,7 +146,7 @@ public class AdminServlet extends HttpServlet {
             } else if (borrower.getMaxBook() - borrower.getBorrowBook() == 0) {
                 mapDat.put("msg", "用户已达最大借阅量");
             } else {
-                borrowDao.insert(borrow);
+                BorrowDao.insert(borrow);
                 mapDat.put("msg", "提交成功");
             }
         }
@@ -169,21 +157,19 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void deleteInf(HttpServletRequest request, HttpServletResponse response, String requestURI) throws IOException {
-        BorrowDao borrowDao = new BorrowDao();
         Map<String, Object> dat = new HashMap<>();
         if ("/deleteBorrows".equals(requestURI)) {
             String[] borrows = request.getParameterValues("borrows[]");
             for (String delete_id : borrows) {
-                borrowDao.delete(delete_id);
+                BorrowDao.delete(delete_id);
             }
             dat.put("msg", "删除" + borrows.length + "条数据成功");
         } else if ("/deleteBooks".equals(requestURI)) {
             String[] books = request.getParameterValues("books[]");
-            BookDao bookDao = new BookDao();
             StringBuffer buf = new StringBuffer();
             for (String ISBN : books) {
-                if (borrowDao.queryBookNum(ISBN) == 0) {
-                    bookDao.delete(ISBN);
+                if (BorrowDao.queryBookNum(ISBN) == 0) {
+                    BookDao.delete(ISBN);
                 } else {
                     buf.append(ISBN).append("\n");
                 }
@@ -195,11 +181,10 @@ public class AdminServlet extends HttpServlet {
             }
         } else if ("/deleteBorrowers".equals(requestURI)) {
             String[] borrowers = request.getParameterValues("borrower[]");
-            BorrowerDao borrowerDao = new BorrowerDao();
             StringBuffer buf = new StringBuffer();
             for (String account : borrowers) {
-                if (borrowDao.queryBorrowerNum(account) == 0) {
-                    borrowerDao.delete(account);
+                if (BorrowDao.queryBorrowerNum(account) == 0) {
+                    BorrowerDao.delete(account);
                 } else {
                     buf.append(account).append("\n");
                 }

@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDao {
-    public User excuteQuery(User user) {
+    public static User excuteQuery(User user) {
         final String sql = "SELECT * FROM user t WHERE t.account = ? AND t.password = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, user.getAccount(), user.getPassword());
@@ -26,7 +26,7 @@ public class UserDao {
         return null;
     }
 
-    public void excuteUpdate(User user) {
+    public static void excuteUpdate(User user) {
         final String sql = "UPDATE user SET password = ?,username = ?,type = ? WHERE account = ?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(user.getPassword(), user.getUsername(), user.getType(), user.getAccount());

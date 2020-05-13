@@ -39,15 +39,13 @@ public class BorrowerServlet extends HttpServlet {
         mapDat.put("code", "0");
         mapDat.put("msg", "query ok");
          if ("/getListDatBorrow".equals(requestURI)) {
-            BorrowDao borrowkDao = new BorrowDao();
             User user = (User) request.getSession().getAttribute("user");
-            List<BorrowInf> dat = borrowkDao.queryList(user.getAccount(), page.getOffset(), page.getLimit());
+            List<BorrowInf> dat = BorrowDao.queryList(user.getAccount(), page.getOffset(), page.getLimit());
             mapDat.put("data", dat);
             mapDat.put("count", dat.size());
         } else if ("/getListDatBook".equals(requestURI)) {
-            BookDao bookDao = new BookDao();
-            mapDat.put("data", bookDao.queryList(page.getOffset(), page.getLimit()));
-            mapDat.put("count", bookDao.queryNumAll());
+            mapDat.put("data", BookDao.queryList(page.getOffset(), page.getLimit()));
+            mapDat.put("count", BookDao.queryNumAll());
         }
         JSONObject json = new JSONObject(mapDat);
         PrintWriter out = response.getWriter();
@@ -64,14 +62,12 @@ public class BorrowerServlet extends HttpServlet {
             if (borrower.getMaxBook() - borrower.getBorrowBook() - books.length < 0) {
                 mapDat.put("msg", "您已经达最大借阅量，这个问题交钱可以解决");
             } else {
-                BookDao bookDao = new BookDao();
-                BorrowDao borrowDao = new BorrowDao();
                 StringBuffer buf = new StringBuffer();
                 for (String book : books) {
-                    if (bookDao.excuteQuery(book) == null) {
+                    if (BookDao.excuteQuery(book) == null) {
                         buf.append("不存在").append(book).append("\n");
                     } else {
-                        borrowDao.insert(new BorrowInf(borrower.getBorrowerAccount(), book));
+                        BorrowDao.insert(new BorrowInf(borrower.getBorrowerAccount(), book));
                     }
                 }
                 if (buf.toString().isEmpty()) {
@@ -90,15 +86,14 @@ public class BorrowerServlet extends HttpServlet {
     private void deleteInf(HttpServletRequest request, HttpServletResponse response, String requestURI) throws IOException {
         Map<String, Object> mapDat = new HashMap<>();
         if ("/deleteBorrow".equals(requestURI)) {
-            BorrowDao borrowDao = new BorrowDao();
             String[] borrows = request.getParameterValues("borrows[]");
             for (String delete_id : borrows) {
-                borrowDao.delete(delete_id);
+                BorrowDao.delete(delete_id);
             }
             mapDat.put("msg", "删除" + borrows.length + "条数据成功");
         }
         Borrower borrower = (Borrower) request.getSession().getAttribute("borrower");
-        request.getSession().setAttribute("borrower", new BorrowerDao().excuteQuery(borrower));
+        request.getSession().setAttribute("borrower", BorrowerDao.excuteQuery(borrower));
         JSONObject json = new JSONObject(mapDat);
         PrintWriter out = response.getWriter();
         out.println(json);
@@ -110,12 +105,10 @@ public class BorrowerServlet extends HttpServlet {
         if ("/modifyPersonalInf".equals(requestURI)) {
             String borrowerAccount = request.getParameter("borrowerAccount");
             String oldpassword = request.getParameter("oldpassword");
-            UserDao userDao = new UserDao();
-            User user = userDao.excuteQuery(new User(borrowerAccount, oldpassword));
+            User user = UserDao.excuteQuery(new User(borrowerAccount, oldpassword));
             mapDat.put("msg", "密码错误，请重试");
             if (user != null) {
-                BorrowerDao borrowerDao = new BorrowerDao();
-                Borrower borrower = borrowerDao.excuteQuery(new Borrower(borrowerAccount));
+                Borrower borrower = BorrowerDao.excuteQuery(new Borrower(borrowerAccount));
                 borrower.setBorrowerID(request.getParameter("borrowerID"));
                 borrower.setPhone(request.getParameter("phone"));
                 borrower.setBorrowerName(request.getParameter("borrowerName"));
@@ -123,8 +116,8 @@ public class BorrowerServlet extends HttpServlet {
                 borrower.setBorrowerAddress(request.getParameter("borrowerAddress"));
                 user.setPassword(request.getParameter("newpassword"));
                 user.setUsername(request.getParameter("borrowerName"));
-                borrowerDao.update(borrower);
-                userDao.excuteUpdate(user);
+                BorrowerDao.update(borrower);
+                UserDao.excuteUpdate(user);
                 request.getSession().setAttribute("borrower", borrower);
                 mapDat.put("msg", "信息更新成功");
             }

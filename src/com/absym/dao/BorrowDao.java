@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BorrowDao {
 
-    public List<BorrowInf> search(Object key, Object offset, Object limit) {
+    public static List<BorrowInf> search(Object key, Object offset, Object limit) {
         List<BorrowInf> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM borrowInf WHERE bookISBN LIKE '%?%' OR borrower LIKE '%?%' LIMIT ? , ?";
         DBConnector connector = new DBConnector();
@@ -29,7 +29,7 @@ public class BorrowDao {
         return retValue;
     }
 
-    public int searchNum(Object key) {
+    public static int searchNum(Object key) {
         final String sql = "SELECT * FROM borrowInf WHERE logID LIKE '%?%' OR operator LIKE '%?%'";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, key, key);
@@ -42,25 +42,25 @@ public class BorrowDao {
         return -1;
     }
 
-    public void insert(BorrowInf borrow) {
+    public static void insert(BorrowInf borrow) {
         final String sql = "INSERT INTO borrowInf (borrower,bookISBN,borrowTime) VALUES(?,?,now())";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, borrow.getBorrower(), borrow.getBookISBN());
     }
 
-    public void delete(String borrowID) {
+    public static void delete(String borrowID) {
         final String sql = "DELETE FROM borrowInf WHERE borrowID = ?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, borrowID);
     }
 
-    public void delete(BorrowInf borrow) {
+    public static void delete(BorrowInf borrow) {
         final String sql = "DELETE FROM borrowInf WHERE borrowID = ?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, borrow.getBorrowID());
     }
 
-    public Integer queryBorrowerNum(String account) {
+    public static Integer queryBorrowerNum(String account) {
         final String sql = "SELECT * FROM borrowInf WHERE borrower = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, account);
@@ -74,7 +74,7 @@ public class BorrowDao {
     }
 
 
-    public Integer queryBookNum(String ISBN) {
+    public static Integer queryBookNum(String ISBN) {
         final String sql = "SELECT * FROM borrowInf WHERE bookISBN = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, ISBN);
@@ -87,7 +87,7 @@ public class BorrowDao {
         return -1;
     }
 
-    public List<BorrowInf> queryList(Object account, Object offset, Object limit) {
+    public static List<BorrowInf> queryList(Object account, Object offset, Object limit) {
         List<BorrowInf> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM borrowInf WHERE borrower = ? limit ? , ?";
         DBConnector connector = new DBConnector();
@@ -104,7 +104,7 @@ public class BorrowDao {
         return retValue;
     }
 
-    public BorrowInf excuteQuery(BorrowInf borrow) {
+    public static BorrowInf excuteQuery(BorrowInf borrow) {
         final String sql = "SELECT * FROM borrowInf t WHERE t.borrowID = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, borrow.getBorrowID());
@@ -120,7 +120,7 @@ public class BorrowDao {
         return null;
     }
 
-    public List<BorrowInf> queryList(Object offset, Object limit) {
+    public static List<BorrowInf> queryList(Object offset, Object limit) {
         List<BorrowInf> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM borrowInf LIMIT ? , ?";
         DBConnector connector = new DBConnector();
@@ -137,7 +137,7 @@ public class BorrowDao {
         return retValue;
     }
 
-    public int queryNumAll() {
+    public static int queryNumAll() {
         final String sql = "SELECT * FROM borrowInf";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql);

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class LogDao {
 
-    public List<Log> search(Object key, Object offset, Object limit) {
+    public static List<Log> search(Object key, Object offset, Object limit) {
         List<Log> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM log WHERE logID LIKE '%?%' OR operator LIKE '%?%' LIMIT ? , ?";
         DBConnector connector = new DBConnector();
@@ -31,7 +31,7 @@ public class LogDao {
         return retValue;
     }
 
-    public int searchNum(Object key) {
+    public static int searchNum(Object key) {
         final String sql = "SELECT * FROM log WHERE logID LIKE '%?%' OR operator LIKE '%?%'";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, key, key);
@@ -44,7 +44,7 @@ public class LogDao {
         return -1;
     }
 
-    public List<Log> queryList(Object offset, Object limit) {
+    public static List<Log> queryList(Object offset, Object limit) {
         List<Log> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM log ORDER BY logID DESC LIMIT  ? , ? ";
         DBConnector connector = new DBConnector();
@@ -62,8 +62,7 @@ public class LogDao {
         return retValue;
     }
 
-    public int queryNumAll() {
-
+    public static int queryNumAll() {
         final String sql = "SELECT * FROM log";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql);
@@ -75,6 +74,17 @@ public class LogDao {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public static void insert(Log log) {
+        LogDao.insert(log.getOperator(),log.getContext(),log.getType());
+    }
+
+
+    public static void insert(String operator,String context,String type) {
+        final String sql = " INSERT INTO Log(operator,context,type)VALUES(?,?,?)";
+        DBConnector connector = new DBConnector();
+        connector.excuteUpdate(sql, operator, context, type);
     }
 }
 

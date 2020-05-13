@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AdminDao {
 
-    public List<Admin> search(Object key, Object offset, Object limit) {
+    public static List<Admin> search(Object key, Object offset, Object limit) {
         List<Admin> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM admin WHERE adminName LIKE '%?%' OR adminAccount LIKE '%?%' LIMIT ? , ?";
         DBConnector connector = new DBConnector();
@@ -27,7 +27,7 @@ public class AdminDao {
         return retValue;
     }
 
-    public int searchNum(Object key) {
+    public static int searchNum(Object key) {
         final String sql = "SELECT * FROM admin WHERE adminName LIKE '%?%' OR adminAccount LIKE '%?%'";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, key, key);
@@ -40,7 +40,7 @@ public class AdminDao {
         return -1;
     }
 
-    public Admin excuteQuery(Admin admin) {
+    public static Admin excuteQuery(Admin admin) {
         final String sql = "SELECT * FROM admin t WHERE t.adminAccount = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, admin.getAdminAccount());
@@ -56,7 +56,7 @@ public class AdminDao {
         return null;
     }
 
-    public void excuteUpdate(Admin admin) {
+    public static void excuteUpdate(Admin admin) {
         final String sql = "UPDATE admin SET adminName = ?,email = ?,adminId = ?,phone = ?,power = ? WHERE adminAccount = ?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, admin.getAdminName(), admin.getEmail(),
@@ -64,7 +64,7 @@ public class AdminDao {
                 admin.getPower(), admin.getAdminAccount());
     }
 
-    public List<Admin> queryList(Object offset, Object limit) {
+    public static List<Admin> queryList(Object offset, Object limit) {
         List<Admin> retValue = new ArrayList<>();
         final String sql = "SELECT * FROM admin LIMIT ? , ?";
         DBConnector connector = new DBConnector();
@@ -81,7 +81,7 @@ public class AdminDao {
         return retValue;
     }
 
-    public int queryNumAll() {
+    public static int queryNumAll() {
         final String sql = "SELECT * FROM admin";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql);
