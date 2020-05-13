@@ -70,8 +70,7 @@
                     </option>
                     <option value="F" <%if ("F".equals(book.getType())) out.print("selected='selected'");%>>F 经济
                     </option>
-                    <option value="G" <%if ("G".equals(book.getType())) out.print("selected='selected'");%>>G
-                        文化、科学、教育、体育
+                    <option value="G" <%if ("G".equals(book.getType())) out.print("selected='selected'");%>>G 文化、科学、教育、体育
                     </option>
                     <option value="H" <%if ("H".equals(book.getType())) out.print("selected='selected'");%>>H 语言、文字
                     </option>
@@ -99,8 +98,7 @@
                     </option>
                     <option value="V" <%if ("V".equals(book.getType())) out.print("selected='selected'");%>>V 航空、航天
                     </option>
-                    <option value="X" <%if ("X".equals(book.getType())) out.print("selected='selected'");%>>X
-                        环境科学、劳动保护科学(安全科学)
+                    <option value="X" <%if ("X".equals(book.getType())) out.print("selected='selected'");%>>X 环境科学、劳动保护科学(安全科学)
                     </option>
                     <option value="Z" <%if ("Z".equals(book.getType())) out.print("selected='selected'");%>>Z 综合性图书
                     </option>
@@ -188,8 +186,7 @@
                     data: dat,
                     dataType: 'json',
                     success: function (data) {
-                        alert(data.msg);
-                        window.location.reload();
+                        parent.layer.closeAll(); //关闭弹窗
                     }
                 })
             });

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,11 +38,12 @@ public class BorrowerServlet extends HttpServlet {
         Page page = new Page(Integer.parseInt(request.getParameter("page")), Integer.parseInt(request.getParameter("limit")));
         mapDat.put("code", "0");
         mapDat.put("msg", "query ok");
-        if ("/getListDatBorrow".equals(requestURI)) {
+         if ("/getListDatBorrow".equals(requestURI)) {
             BorrowDao borrowkDao = new BorrowDao();
             User user = (User) request.getSession().getAttribute("user");
-            mapDat.put("data", borrowkDao.queryList(user.getAccount(), page.getOffset(), page.getLimit()));
-            mapDat.put("count", borrowkDao.queryNumAll());
+            List<BorrowInf> dat = borrowkDao.queryList(user.getAccount(), page.getOffset(), page.getLimit());
+            mapDat.put("data", dat);
+            mapDat.put("count", dat.size());
         } else if ("/getListDatBook".equals(requestURI)) {
             BookDao bookDao = new BookDao();
             mapDat.put("data", bookDao.queryList(page.getOffset(), page.getLimit()));

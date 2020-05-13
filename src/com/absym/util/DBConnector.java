@@ -8,10 +8,10 @@ public class DBConnector {
 
     public DBConnector() {
         try {
-            String url = "jdbc:mysql://127.0.0.1:3306/schoolwork?serverTimezone=UTC&characterEncoding=UTF-8";
+            String url = "jdbc:mysql://127.0.0.1:3306/BookManagerDB?serverTimezone=UTC&characterEncoding=UTF-8";
             String user = "root";
-            String psw = "735797799";
-            Class.forName("com.mysql.jdbc.Driver");
+            String psw = "99370680";
+            Class.forName("com.mysql.cj.jdbc.Driver");
             this.conn = DriverManager.getConnection(url, user, psw);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();

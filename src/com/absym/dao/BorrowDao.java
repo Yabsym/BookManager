@@ -14,24 +14,23 @@ public class BorrowDao {
 
     public List<BorrowInf> search(Object key, Object offset, Object limit) {
         List<BorrowInf> retValue = new ArrayList<>();
-        final String sql = "SELECT * FROM borrow WHERE bookISBN LIKE '%?%' OR borrower LIKE '%?%' LIMIT ? , ?";
+        final String sql = "SELECT * FROM borrowInf WHERE bookISBN LIKE '%?%' OR borrower LIKE '%?%' LIMIT ? , ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, key, key, offset, limit);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             while (resultSet.next()) {
-                retValue.add(new BorrowInf(resultSet.getString(1), resultSet.getString(2),
-                        simpleDateFormat.parse(resultSet.getString(3)),
-                        Integer.parseInt(resultSet.getString(4))));
+                retValue.add(new BorrowInf(resultSet.getString("borrower"),resultSet.getString("bookISBN"),
+                        resultSet.getDate("borrowTime"),resultSet.getInt("borrowID")));
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return retValue;
     }
 
     public int searchNum(Object key) {
-        final String sql = "SELECT * FROM borrow WHERE logID LIKE '%?%' OR operator LIKE '%?%'";
+        final String sql = "SELECT * FROM borrowInf WHERE logID LIKE '%?%' OR operator LIKE '%?%'";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, key, key);
         try {
@@ -44,25 +43,25 @@ public class BorrowDao {
     }
 
     public void insert(BorrowInf borrow) {
-        final String sql = "INSERT INTO borrow (borrower,bookISBN,borrowTime) VALUES(?,?,now())";
+        final String sql = "INSERT INTO borrowInf (borrower,bookISBN,borrowTime) VALUES(?,?,now())";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, borrow.getBorrower(), borrow.getBookISBN());
     }
 
     public void delete(String borrowID) {
-        final String sql = "DELETE FROM borrow WHERE borrowID = ?";
+        final String sql = "DELETE FROM borrowInf WHERE borrowID = ?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, borrowID);
     }
 
     public void delete(BorrowInf borrow) {
-        final String sql = "DELETE FROM borrow WHERE borrowID = ?";
+        final String sql = "DELETE FROM borrowInf WHERE borrowID = ?";
         DBConnector connector = new DBConnector();
         connector.excuteUpdate(sql, borrow.getBorrowID());
     }
 
     public Integer queryBorrowerNum(String account) {
-        final String sql = "SELECT * FROM borrow WHERE borrower = ?";
+        final String sql = "SELECT * FROM borrowInf WHERE borrower = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, account);
         try {
@@ -76,7 +75,7 @@ public class BorrowDao {
 
 
     public Integer queryBookNum(String ISBN) {
-        final String sql = "SELECT * FROM borrow WHERE bookISBN = ?";
+        final String sql = "SELECT * FROM borrowInf WHERE bookISBN = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, ISBN);
         try {
@@ -90,34 +89,32 @@ public class BorrowDao {
 
     public List<BorrowInf> queryList(Object account, Object offset, Object limit) {
         List<BorrowInf> retValue = new ArrayList<>();
-        final String sql = "SELECT * FROM borrow WHERE borrower = ? limit ? , ?";
+        final String sql = "SELECT * FROM borrowInf WHERE borrower = ? limit ? , ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, account, offset, limit);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             while (resultSet.next()) {
-                retValue.add(new BorrowInf(resultSet.getString(1), resultSet.getString(2),
-                        simpleDateFormat.parse(resultSet.getString(3)),
-                        Integer.parseInt(resultSet.getString(4))));
+                retValue.add(new BorrowInf(resultSet.getString("borrower"),resultSet.getString("bookISBN"),
+                        resultSet.getDate("borrowTime"),resultSet.getInt("borrowID")));
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return retValue;
     }
 
     public BorrowInf excuteQuery(BorrowInf borrow) {
-        final String sql = "SELECT * FROM borrow t WHERE t.borrowID = ?";
+        final String sql = "SELECT * FROM borrowInf t WHERE t.borrowID = ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, borrow.getBorrowID());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             while (resultSet.next()) {
-                return new BorrowInf(resultSet.getString(1), resultSet.getString(2),
-                        simpleDateFormat.parse(resultSet.getString(3)),
-                        Integer.parseInt(resultSet.getString(4)));
+                return new BorrowInf(resultSet.getString("borrower"),resultSet.getString("bookISBN"),
+                        resultSet.getDate("borrowTime"),resultSet.getInt("borrowID"));
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -125,24 +122,23 @@ public class BorrowDao {
 
     public List<BorrowInf> queryList(Object offset, Object limit) {
         List<BorrowInf> retValue = new ArrayList<>();
-        final String sql = "SELECT * FROM borrow LIMIT ? , ?";
+        final String sql = "SELECT * FROM borrowInf LIMIT ? , ?";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql, offset, limit);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             while (resultSet.next()) {
-                retValue.add(new BorrowInf(resultSet.getString(1), resultSet.getString(2),
-                        simpleDateFormat.parse(resultSet.getString(3)),
-                        Integer.parseInt(resultSet.getString(4))));
+                retValue.add(new BorrowInf(resultSet.getString("borrower"),resultSet.getString("bookISBN"),
+                        resultSet.getDate("borrowTime"),resultSet.getInt("borrowID")));
             }
-        } catch (SQLException | ParseException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return retValue;
     }
 
     public int queryNumAll() {
-        final String sql = "SELECT * FROM borrow";
+        final String sql = "SELECT * FROM borrowInf";
         DBConnector connector = new DBConnector();
         ResultSet resultSet = connector.excuteQuery(sql);
         ;

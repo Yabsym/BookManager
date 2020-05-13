@@ -72,11 +72,11 @@ public class BookDao {
         ResultSet resultSet = connector.excuteQuery(sql, ISBN);
         try {
             while (resultSet.next()) {
-                return new Book(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), Double.parseDouble(resultSet.getString(4)),
-                        resultSet.getString(5), resultSet.getString(6),
-                        resultSet.getString(7), Integer.parseInt(resultSet.getString(8)),
-                        Integer.parseInt(resultSet.getString(8)));
+                return new Book(resultSet.getString("bookISBN"),resultSet.getString("bookName"),
+                        resultSet.getString("per"),resultSet.getDouble("price"),
+                        resultSet.getString("publicer"),resultSet.getString("publicTime"),
+                        resultSet.getString("type"),resultSet.getInt("allNum"),
+                        resultSet.getInt("inventoryNum"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,11 +91,10 @@ public class BookDao {
         ResultSet resultSet = connector.excuteQuery(sql, offset, limit);
         try {
             while (resultSet.next()) {
-                retValue.add(new Book(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), Double.parseDouble(resultSet.getString(4)),
-                        resultSet.getString(5), resultSet.getString(6),
-                        resultSet.getString(7), Integer.parseInt(resultSet.getString(8)),
-                        Integer.parseInt(resultSet.getString(9))));
+                retValue.add(new Book(resultSet.getString("bookISBN"),resultSet.getString("bookName"),
+                        resultSet.getString("per"),resultSet.getDouble("price"),resultSet.getString("publicer"),
+                        resultSet.getString("publicTime"),resultSet.getString("type"),resultSet.getInt("allNum"),
+                        resultSet.getInt("inventoryNum")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

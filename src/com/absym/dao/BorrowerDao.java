@@ -43,10 +43,10 @@ public class BorrowerDao {
         ;
         try {
             while (resultSet.next()) {
-                return new Borrower(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4),
-                        resultSet.getString(5), resultSet.getString(6),
-                        Integer.parseInt(resultSet.getString(7)), Integer.parseInt(resultSet.getString(8)));
+                return new Borrower(resultSet.getString("borrowerName"),resultSet.getString("borrowerAccount"),
+                        resultSet.getString("borrowerAddress"), resultSet.getString("phone"),
+                        resultSet.getString("borrowerID"), resultSet.getString("sex"),
+                        resultSet.getInt("maxBook"), resultSet.getInt("borrowBook"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,11 +65,10 @@ public class BorrowerDao {
         ResultSet resultSet = connector.excuteQuery(sql, key, key, offset, limit);
         try {
             while (resultSet.next()) {
-                retValue.add(new Borrower(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4),
-                        resultSet.getString(5), resultSet.getString(6),
-                        Integer.parseInt(resultSet.getString(7)),
-                        Integer.parseInt(resultSet.getString(8))));
+                retValue.add(new Borrower(resultSet.getString("borrowerName"),resultSet.getString("borrowerAccount"),
+                        resultSet.getString("borrowerAddress"),resultSet.getString("phone"),
+                        resultSet.getString("borrowerID"),resultSet.getString("sex"),
+                        resultSet.getInt("maxBook"),resultSet.getInt("borrowBook")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,11 +96,10 @@ public class BorrowerDao {
         ResultSet resultSet = connector.excuteQuery(sql, offset, limit);
         try {
             while (resultSet.next()) {
-                retValue.add(new Borrower(resultSet.getString(1), resultSet.getString(2),
-                        resultSet.getString(3), resultSet.getString(4),
-                        resultSet.getString(5), resultSet.getString(6),
-                        Integer.parseInt(resultSet.getString(7)),
-                        Integer.parseInt(resultSet.getString(8))));
+                retValue.add(new Borrower(resultSet.getString("borrowerName"),resultSet.getString("borrowerAccount"),
+                        resultSet.getString("borrowerAddress"),resultSet.getString("phone"),
+                        resultSet.getString("borrowerID"),resultSet.getString("sex"),
+                        resultSet.getInt("maxBook"),resultSet.getInt("borrowBook")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

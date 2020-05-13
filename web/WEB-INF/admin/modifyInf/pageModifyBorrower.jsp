@@ -123,6 +123,7 @@
     </div>
 </div>
 <script>
+
     layui.use(['jquery', 'form'], function () {
         var form = layui.form;
         var $ = layui.jquery;
@@ -137,7 +138,7 @@
                     dataType: 'json',
                     success: function (data) {
                         alert(data.msg);
-                        window.location.reload();
+
                     }
                 })
             });
